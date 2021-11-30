@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: pgdb
+    image: postgres:11.14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    tmpfs: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:6.2
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    tmpfs:
+      - /var/lib/pgadmin:mode=770,uid=5050,gid=5050
+      - /pgadmin4/servers.json:mode=770,uid=5050,gid=5050
+    ports:
+      - "8080:80"
