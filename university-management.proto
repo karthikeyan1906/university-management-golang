@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+//import "google/protobuf/struct.proto";
+package university_management;
+
+option go_package = "/university_management";
+
+message Department {
+  int32 id = 1;
+  string name = 2;
+}
+
+message GetDepartmentRequest {
+  int32 id = 1;
+}
+
+message GetDepartmentResponse {
+  Department department = 1;
+}
+
+service UniversityManagementService {
+  rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {
+  }
+}
