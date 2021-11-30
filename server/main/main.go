@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 	um "university-management-golang/protoclient/university_management"
-	"university-management-golang/server/handlers"
+	"university-management-golang/server/internal/handlers"
 )
 
 const port = "2345"
