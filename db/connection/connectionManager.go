@@ -3,10 +3,12 @@ package connection
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
 	"github.com/gocraft/dbr/v2"
 	"github.com/gocraft/dbr/v2/dialect"
+	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
-	"log"
 )
 
 type DatabaseConnectionManager interface {
@@ -15,7 +17,7 @@ type DatabaseConnectionManager interface {
 }
 
 type DatabaseConnectionManagerImpl struct {
-	DatabaseConfig *DBConfig
+	DatabaseConfig     *DBConfig
 	DatabaseConnection DatabaseConnect
 }
 
@@ -42,7 +44,7 @@ func (dbc *DBConnect) GetSession() *dbr.Session {
 }
 
 func (manager *DatabaseConnectionManagerImpl) GetConnection() (DatabaseConnect, error) {
-	if manager.DatabaseConnection!= nil {
+	if manager.DatabaseConnection != nil {
 		return manager.DatabaseConnection, nil
 	}
 

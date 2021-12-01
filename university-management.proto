@@ -31,10 +31,20 @@ message GetStudentsResponse {
   repeated Student students = 1;
 }
 
+message GetAllStudentRequest {}
+
+message GetAllStudentsResponse {
+  repeated Student students = 1;
+}
+
 service UniversityManagementService {
   rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {
   }
 
   rpc GetStudents (GetStudentRequest) returns (GetStudentsResponse) {
     }
+
+   rpc GetStudentDirectory (GetAllStudentRequest) returns (GetAllStudentsResponse){
+
+   } 
 }

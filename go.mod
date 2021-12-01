@@ -10,4 +10,5 @@ require (
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect
 	google.golang.org/protobuf v1.27.1
 	github.com/gocraft/dbr/v2 v2.7.2
+	github.com/lib/pq v1.10.2
 )

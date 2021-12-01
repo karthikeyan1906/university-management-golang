@@ -1,39 +1,38 @@
 package main
 
 import (
-	"google.golang.org/grpc"
 	"log"
 	"net"
-	migrations "university-management-golang/db"
 	"university-management-golang/db/connection"
 	um "university-management-golang/protoclient/university_management"
 	"university-management-golang/server/internal/handlers"
+
+	"google.golang.org/grpc"
 )
 
 const port = "2345"
-
 
 //db
 const (
 	username = "postgres"
 	password = "admin"
-	host = "localhost"
+	host     = "localhost"
 	dbPort   = "5436"
-	dbName = "postgres"
-	schema = "public"
+	dbName   = "postgres"
+	schema   = "public"
 )
 
 func main() {
-	err := migrations.MigrationsUp(username, password, host, dbPort, dbName, schema)
-	if err != nil {
-		log.Fatalf("Failed to migrate, err: %+v\n", err)
-	}
+	// err := migrations.MigrationsUp(username, password, host, dbPort, dbName, schema)
+	// if err != nil {
+	// 	log.Fatalf("Failed to migrate, err: %+v\n", err)
+	// }
 
 	connectionmanager := &connection.DatabaseConnectionManagerImpl{
-			&connection.DBConfig{
-				host,dbPort,username,password,dbName,schema,
-			},
-			nil,
+		&connection.DBConfig{
+			host, dbPort, username, password, dbName, schema,
+		},
+		nil,
 	}
 
 	//insertSeedData(connectionmanager)

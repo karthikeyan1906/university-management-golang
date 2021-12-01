@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UniversityManagementServiceClient interface {
 	GetDepartment(ctx context.Context, in *GetDepartmentRequest, opts ...grpc.CallOption) (*GetDepartmentResponse, error)
 	GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentsResponse, error)
+	GetStudentDirectory(ctx context.Context, in *GetAllStudentRequest, opts ...grpc.CallOption) (*GetAllStudentsResponse, error)
 }
 
 type universityManagementServiceClient struct {
@@ -48,12 +49,22 @@ func (c *universityManagementServiceClient) GetStudents(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *universityManagementServiceClient) GetStudentDirectory(ctx context.Context, in *GetAllStudentRequest, opts ...grpc.CallOption) (*GetAllStudentsResponse, error) {
+	out := new(GetAllStudentsResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/GetStudentDirectory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UniversityManagementServiceServer is the server API for UniversityManagementService service.
 // All implementations must embed UnimplementedUniversityManagementServiceServer
 // for forward compatibility
 type UniversityManagementServiceServer interface {
 	GetDepartment(context.Context, *GetDepartmentRequest) (*GetDepartmentResponse, error)
 	GetStudents(context.Context, *GetStudentRequest) (*GetStudentsResponse, error)
+	GetStudentDirectory(context.Context, *GetAllStudentRequest) (*GetAllStudentsResponse, error)
 	mustEmbedUnimplementedUniversityManagementServiceServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedUniversityManagementServiceServer) GetDepartment(context.Cont
 }
 func (UnimplementedUniversityManagementServiceServer) GetStudents(context.Context, *GetStudentRequest) (*GetStudentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudents not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) GetStudentDirectory(context.Context, *GetAllStudentRequest) (*GetAllStudentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudentDirectory not implemented")
 }
 func (UnimplementedUniversityManagementServiceServer) mustEmbedUnimplementedUniversityManagementServiceServer() {
 }
@@ -117,6 +131,24 @@ func _UniversityManagementService_GetStudents_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UniversityManagementService_GetStudentDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllStudentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).GetStudentDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/GetStudentDirectory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).GetStudentDirectory(ctx, req.(*GetAllStudentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UniversityManagementService_ServiceDesc is the grpc.ServiceDesc for UniversityManagementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -131,6 +163,10 @@ var UniversityManagementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStudents",
 			Handler:    _UniversityManagementService_GetStudents_Handler,
+		},
+		{
+			MethodName: "GetStudentDirectory",
+			Handler:    _UniversityManagementService_GetStudentDirectory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
