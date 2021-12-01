@@ -15,3 +15,7 @@ Use http://localhost:8080 and use username `admin@admin.com` and password `admin
 * brew install protobuf
 * protoc --version 
 * protoc --go-grpc_out=protoclient --go_out=protoclient university-management.proto
+
+## Pre-requisites
+* go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+* go get github.com/shuLhan/go-bindata/...
