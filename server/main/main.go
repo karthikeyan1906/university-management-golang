@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	migrations "university-management-golang/db"
+	"university-management-golang/db/connection"
 	um "university-management-golang/protoclient/university_management"
 	"university-management-golang/server/internal/handlers"
 )
@@ -28,6 +29,15 @@ func main() {
 		log.Fatalf("Failed to migrate, err: %+v\n", err)
 	}
 
+	connectionmanager := &connection.DatabaseConnectionManagerImpl{
+			&connection.DBConfig{
+				host,dbPort,username,password,dbName,schema,
+			},
+			nil,
+	}
+
+	//insertSeedData(connectionmanager)
+
 	grpcServer := grpc.NewServer()
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -35,10 +45,33 @@ func main() {
 	}
 	log.Printf("Starting to listen on port: %s\n", port)
 
-	um.RegisterUniversityManagementServiceServer(grpcServer, handlers.NewUniversityManagementHandler())
+	um.RegisterUniversityManagementServiceServer(grpcServer, handlers.NewUniversityManagementHandler(connectionmanager))
 	err = grpcServer.Serve(lis)
 
 	if err != nil {
 		log.Fatalf("Failed to start GRPC Server: %+v\n", err)
 	}
+}
+
+func insertSeedData(connectionManager connection.DatabaseConnectionManager) {
+	connection, err := connectionManager.GetConnection()
+	if err != nil {
+		log.Fatalf("Error: %+v", err)
+	}
+
+	log.Println("Cleaning up department table")
+	_, err = connection.GetSession().DeleteFrom("department").Exec()
+	if err != nil {
+		log.Fatalf("Could not delete from department table. Err: %+v", err)
+	}
+
+	log.Println("Inserting into department table")
+	_, err = connection.GetSession().InsertInto("department").Columns("name").
+		Values("Computer Science").Exec()
+
+	if err != nil {
+		log.Fatalf("Could not insert into department table. Err: %+v", err)
+	}
+
+	defer connectionManager.CloseConnection()
 }
