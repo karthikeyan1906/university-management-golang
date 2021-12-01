@@ -1,0 +1,1 @@
+ALTER TABLE departments ADD CONSTRAINT pkey_id PRIMARY KEY (id);

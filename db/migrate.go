@@ -17,9 +17,11 @@ func MigrationsUp(username, password, host, port, dbName, schema string) error {
 		}
 		return asset, nil
 	}
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?search_path=%s;sslmode=%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		username, password, host, port,
-		dbName, schema, "disable")
+		dbName,"disable")
+
+		log.Println(dsn)
 	err := runMigrations(AssetNames(), assetFunc, "university-management", dsn)
 	if err != nil {
 		if err == migrate.ErrNoChange {
