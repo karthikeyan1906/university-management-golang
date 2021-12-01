@@ -14,8 +14,9 @@ type universityManagementServer struct {
 }
 
 func (u *universityManagementServer) GetDepartment(ctx context.Context, request *um.GetDepartmentRequest) (*um.GetDepartmentResponse, error) {
-	log.Println("Hello World!")
 	connection, err := u.connectionManager.GetConnection()
+	defer u.connectionManager.CloseConnection()
+
 	if err != nil {
 		log.Fatalf("Error: %+v", err)
 	}
@@ -27,8 +28,6 @@ func (u *universityManagementServer) GetDepartment(ctx context.Context, request 
 	 if err != nil {
 		 log.Fatalf("Error while marshaling %+v", err)
 	 }
-
-	defer u.connectionManager.CloseConnection()
 
 	return &um.GetDepartmentResponse{Department: &um.Department{
 		Id:   department.Id,
