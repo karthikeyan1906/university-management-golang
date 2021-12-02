@@ -21,6 +21,9 @@ type UniversityManagementServiceClient interface {
 	GetDepartment(ctx context.Context, in *GetDepartmentRequest, opts ...grpc.CallOption) (*GetDepartmentResponse, error)
 	GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentsResponse, error)
 	GetStudentDirectory(ctx context.Context, in *GetAllStudentRequest, opts ...grpc.CallOption) (*GetAllStudentsResponse, error)
+	GetStaffAssignedToStudent(ctx context.Context, in *GetStaffRequest, opts ...grpc.CallOption) (*GetStaffsResponse, error)
+	Notify(ctx context.Context, in *GetNotifyRequest, opts ...grpc.CallOption) (*GetNotifyResponse, error)
+	GetAttendance(ctx context.Context, in *GetAttendanceRequest, opts ...grpc.CallOption) (UniversityManagementService_GetAttendanceClient, error)
 }
 
 type universityManagementServiceClient struct {
@@ -58,6 +61,56 @@ func (c *universityManagementServiceClient) GetStudentDirectory(ctx context.Cont
 	return out, nil
 }
 
+func (c *universityManagementServiceClient) GetStaffAssignedToStudent(ctx context.Context, in *GetStaffRequest, opts ...grpc.CallOption) (*GetStaffsResponse, error) {
+	out := new(GetStaffsResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/GetStaffAssignedToStudent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *universityManagementServiceClient) Notify(ctx context.Context, in *GetNotifyRequest, opts ...grpc.CallOption) (*GetNotifyResponse, error) {
+	out := new(GetNotifyResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/Notify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *universityManagementServiceClient) GetAttendance(ctx context.Context, in *GetAttendanceRequest, opts ...grpc.CallOption) (UniversityManagementService_GetAttendanceClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UniversityManagementService_ServiceDesc.Streams[0], "/university_management.UniversityManagementService/GetAttendance", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &universityManagementServiceGetAttendanceClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type UniversityManagementService_GetAttendanceClient interface {
+	Recv() (*GetAttendanceResponse, error)
+	grpc.ClientStream
+}
+
+type universityManagementServiceGetAttendanceClient struct {
+	grpc.ClientStream
+}
+
+func (x *universityManagementServiceGetAttendanceClient) Recv() (*GetAttendanceResponse, error) {
+	m := new(GetAttendanceResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // UniversityManagementServiceServer is the server API for UniversityManagementService service.
 // All implementations must embed UnimplementedUniversityManagementServiceServer
 // for forward compatibility
@@ -65,6 +118,9 @@ type UniversityManagementServiceServer interface {
 	GetDepartment(context.Context, *GetDepartmentRequest) (*GetDepartmentResponse, error)
 	GetStudents(context.Context, *GetStudentRequest) (*GetStudentsResponse, error)
 	GetStudentDirectory(context.Context, *GetAllStudentRequest) (*GetAllStudentsResponse, error)
+	GetStaffAssignedToStudent(context.Context, *GetStaffRequest) (*GetStaffsResponse, error)
+	Notify(context.Context, *GetNotifyRequest) (*GetNotifyResponse, error)
+	GetAttendance(*GetAttendanceRequest, UniversityManagementService_GetAttendanceServer) error
 	mustEmbedUnimplementedUniversityManagementServiceServer()
 }
 
@@ -80,6 +136,15 @@ func (UnimplementedUniversityManagementServiceServer) GetStudents(context.Contex
 }
 func (UnimplementedUniversityManagementServiceServer) GetStudentDirectory(context.Context, *GetAllStudentRequest) (*GetAllStudentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudentDirectory not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) GetStaffAssignedToStudent(context.Context, *GetStaffRequest) (*GetStaffsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStaffAssignedToStudent not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) Notify(context.Context, *GetNotifyRequest) (*GetNotifyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Notify not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) GetAttendance(*GetAttendanceRequest, UniversityManagementService_GetAttendanceServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAttendance not implemented")
 }
 func (UnimplementedUniversityManagementServiceServer) mustEmbedUnimplementedUniversityManagementServiceServer() {
 }
@@ -149,6 +214,63 @@ func _UniversityManagementService_GetStudentDirectory_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UniversityManagementService_GetStaffAssignedToStudent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStaffRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).GetStaffAssignedToStudent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/GetStaffAssignedToStudent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).GetStaffAssignedToStudent(ctx, req.(*GetStaffRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UniversityManagementService_Notify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotifyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).Notify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/Notify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).Notify(ctx, req.(*GetNotifyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UniversityManagementService_GetAttendance_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetAttendanceRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(UniversityManagementServiceServer).GetAttendance(m, &universityManagementServiceGetAttendanceServer{stream})
+}
+
+type UniversityManagementService_GetAttendanceServer interface {
+	Send(*GetAttendanceResponse) error
+	grpc.ServerStream
+}
+
+type universityManagementServiceGetAttendanceServer struct {
+	grpc.ServerStream
+}
+
+func (x *universityManagementServiceGetAttendanceServer) Send(m *GetAttendanceResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // UniversityManagementService_ServiceDesc is the grpc.ServiceDesc for UniversityManagementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -168,7 +290,21 @@ var UniversityManagementService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetStudentDirectory",
 			Handler:    _UniversityManagementService_GetStudentDirectory_Handler,
 		},
+		{
+			MethodName: "GetStaffAssignedToStudent",
+			Handler:    _UniversityManagementService_GetStaffAssignedToStudent_Handler,
+		},
+		{
+			MethodName: "Notify",
+			Handler:    _UniversityManagementService_Notify_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetAttendance",
+			Handler:       _UniversityManagementService_GetAttendance_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "university-management.proto",
 }

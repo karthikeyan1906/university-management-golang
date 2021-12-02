@@ -7,6 +7,7 @@ import (
 	"university-management-golang/protoclient/university_management"
 
 	"google.golang.org/grpc"
+	"io"
 )
 
 const (
@@ -27,6 +28,7 @@ func main() {
 	// }
 	// log.Println(departmentResponse)
 
+	//*******************************************
 	// var departName string = "CS"
 	// studentResponse, err := client.GetStudents(context.TODO(), &university_management.GetStudentRequest{DepartmentName: departName})
 
@@ -36,13 +38,40 @@ func main() {
 
 	// log.Println(studentResponse)
 
-	log.Println("******All Student Api******")
+	// log.Println("******All Student Api******")
 
-	studentAllResponse, err := client.GetStudentDirectory(context.TODO(), &university_management.GetAllStudentRequest{})
+	// studentAllResponse, err := client.GetStudentDirectory(context.TODO(), &university_management.GetAllStudentRequest{})
+
+	// if err != nil {
+	// 	log.Fatalf("Error occured while fetching students,err: %+v", err)
+	// }
+
+	// log.Println(studentAllResponse)
+
+	// var studentId int32 = 4
+
+	// notifyResponse, err := client.Notify(context.TODO(), &university_management.GetNotifyRequest{Id: studentId})
+
+	// if err != nil {
+	// 	log.Fatalf("Error occured while fetching students,err: %+v", err)
+	// }
+
+	// log.Println(notifyResponse)
+
+	stream, err := client.GetAttendance(context.TODO(),&university_management.GetAttendanceRequest{})
 
 	if err != nil {
-		log.Fatalf("Error occured while fetching students,err: %+v", err)
-	}
-
-	log.Println(studentAllResponse)
+		log.Fatalf("Not able to stream attaendance %+v",err)
+	  }
+	  for {
+		  result, err := stream.Recv()
+		  if err == io.EOF {
+			  break
+		  }
+		  if err != nil {
+			  log.Fatalf("Error while recieving attendance response %v",err)
+		  }
+		  stream.CloseSend()
+		  log.Println(result.Ids)
+		}
 }

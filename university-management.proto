@@ -15,6 +15,11 @@ message Student {
   string name = 2;
 }
 
+message Staff{
+  int32 staffId=1;
+  string staffName=2;
+}
+
 message GetDepartmentRequest {
   int32 id = 1;
 }
@@ -37,14 +42,48 @@ message GetAllStudentsResponse {
   repeated Student students = 1;
 }
 
+message GetStaffRequest{
+  int32 roll = 1;
+}
+
+message GetStaffsResponse{
+  repeated Staff staff = 1;
+}
+
+message GetNotifyRequest{
+  int32 id = 1;
+}
+
+message GetNotifyResponse{
+  string message = 1;
+}
+
+message GetAttendanceRequest{}
+message GetAttendanceResponse{
+   repeated int32 ids = 1;
+}
+
 service UniversityManagementService {
   rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {
   }
 
   rpc GetStudents (GetStudentRequest) returns (GetStudentsResponse) {
-    }
+  }
 
-   rpc GetStudentDirectory (GetAllStudentRequest) returns (GetAllStudentsResponse){
+  rpc GetStudentDirectory (GetAllStudentRequest) returns (GetAllStudentsResponse){
 
-   } 
+  }
+
+  rpc GetStaffAssignedToStudent (GetStaffRequest) returns (GetStaffsResponse){
+
+  }
+
+  rpc Notify(GetNotifyRequest) returns (GetNotifyResponse){
+
+  }
+
+  rpc GetAttendance(GetAttendanceRequest) returns (stream GetAttendanceResponse){
+
+  }
+
 }

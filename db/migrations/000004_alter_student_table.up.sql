@@ -1,0 +1,1 @@
+ALTER TABLE student ADD CONSTRAINT pkeys_id PRIMARY KEY (roll);
