@@ -1,6 +1,9 @@
 syntax = "proto3";
 
 //import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
 package university_management;
 
 option go_package = "/university_management";
@@ -18,7 +21,38 @@ message GetDepartmentResponse {
   Department department = 1;
 }
 
+message Student {
+  int32 rollnumber = 1;
+  string name = 2;
+  int32 departmentid = 3;
+}
+
+message GetStudentRequest {
+  string departmentName = 1;
+}
+
+message GetStudentResponse {
+  repeated Student students = 1;
+}
+
+message SignInRequest {
+  int32 rollnumber = 1;
+  google.protobuf.Timestamp signInTime = 2;
+}
+
+message SignInResponse {
+  int64 signInId = 1;
+}
+
+message SignOut {
+  int32 rollnumber = 1;
+  google.protobuf.Timestamp signOutTime = 2;
+}
+
 service UniversityManagementService {
-  rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {
-  }
+  rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {}
+  rpc GetStudents (GetStudentRequest) returns (GetStudentResponse) {}
+  rpc CaptureUserSignIn (SignInRequest) returns (SignInResponse) {}
+  rpc CaptureUserSignOut (SignOut) returns (google.protobuf.Empty) {}
+
 }

@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +20,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UniversityManagementServiceClient interface {
 	GetDepartment(ctx context.Context, in *GetDepartmentRequest, opts ...grpc.CallOption) (*GetDepartmentResponse, error)
+	GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error)
+	CaptureUserSignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	CaptureUserSignOut(ctx context.Context, in *SignOut, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type universityManagementServiceClient struct {
@@ -38,11 +42,41 @@ func (c *universityManagementServiceClient) GetDepartment(ctx context.Context, i
 	return out, nil
 }
 
+func (c *universityManagementServiceClient) GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error) {
+	out := new(GetStudentResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/GetStudents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *universityManagementServiceClient) CaptureUserSignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/CaptureUserSignIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *universityManagementServiceClient) CaptureUserSignOut(ctx context.Context, in *SignOut, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/CaptureUserSignOut", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UniversityManagementServiceServer is the server API for UniversityManagementService service.
 // All implementations must embed UnimplementedUniversityManagementServiceServer
 // for forward compatibility
 type UniversityManagementServiceServer interface {
 	GetDepartment(context.Context, *GetDepartmentRequest) (*GetDepartmentResponse, error)
+	GetStudents(context.Context, *GetStudentRequest) (*GetStudentResponse, error)
+	CaptureUserSignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	CaptureUserSignOut(context.Context, *SignOut) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUniversityManagementServiceServer()
 }
 
@@ -52,6 +86,15 @@ type UnimplementedUniversityManagementServiceServer struct {
 
 func (UnimplementedUniversityManagementServiceServer) GetDepartment(context.Context, *GetDepartmentRequest) (*GetDepartmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDepartment not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) GetStudents(context.Context, *GetStudentRequest) (*GetStudentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudents not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) CaptureUserSignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CaptureUserSignIn not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) CaptureUserSignOut(context.Context, *SignOut) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CaptureUserSignOut not implemented")
 }
 func (UnimplementedUniversityManagementServiceServer) mustEmbedUnimplementedUniversityManagementServiceServer() {
 }
@@ -85,6 +128,60 @@ func _UniversityManagementService_GetDepartment_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UniversityManagementService_GetStudents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStudentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).GetStudents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/GetStudents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).GetStudents(ctx, req.(*GetStudentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UniversityManagementService_CaptureUserSignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).CaptureUserSignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/CaptureUserSignIn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).CaptureUserSignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UniversityManagementService_CaptureUserSignOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignOut)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).CaptureUserSignOut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/CaptureUserSignOut",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).CaptureUserSignOut(ctx, req.(*SignOut))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UniversityManagementService_ServiceDesc is the grpc.ServiceDesc for UniversityManagementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -95,6 +192,18 @@ var UniversityManagementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDepartment",
 			Handler:    _UniversityManagementService_GetDepartment_Handler,
+		},
+		{
+			MethodName: "GetStudents",
+			Handler:    _UniversityManagementService_GetStudents_Handler,
+		},
+		{
+			MethodName: "CaptureUserSignIn",
+			Handler:    _UniversityManagementService_CaptureUserSignIn_Handler,
+		},
+		{
+			MethodName: "CaptureUserSignOut",
+			Handler:    _UniversityManagementService_CaptureUserSignOut_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,11 +2,12 @@ package migrations
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	bindata "github.com/golang-migrate/migrate/v4/source/go_bindata"
 	"github.com/pkg/errors"
-	"log"
 )
 
 func MigrationsUp(username, password, host, port, dbName, schema string) error {
@@ -17,7 +18,7 @@ func MigrationsUp(username, password, host, port, dbName, schema string) error {
 		}
 		return asset, nil
 	}
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?search_path=%s;sslmode=%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?search_path=%s&sslmode=%s",
 		username, password, host, port,
 		dbName, schema, "disable")
 	err := runMigrations(AssetNames(), assetFunc, "university-management", dsn)
