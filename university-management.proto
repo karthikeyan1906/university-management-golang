@@ -38,6 +38,7 @@ message GetStudentResponse {
 message SignInRequest {
   int32 rollnumber = 1;
   google.protobuf.Timestamp signInTime = 2;
+  string studentName = 3;
 }
 
 message SignInResponse {
@@ -48,6 +49,13 @@ message SignOutRequest {
   int32 rollnumber = 1;
   google.protobuf.Timestamp signOutTime = 2;
   int32 signedInId = 3;
+}
+
+message userActivity {
+  int32 id = 1;
+  int32 studentid = 2;
+  string signin = 3;
+  string signout = 4;
 }
 
 service UniversityManagementService {

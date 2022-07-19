@@ -37,10 +37,10 @@ func main() {
 	log.Println(resp)
 
 	var studentId int32 = 2
-
 	signInResp, e := univClient.CaptureUserSignIn(context.TODO(), &university_management.SignInRequest{
-		Rollnumber: studentId,
-		SignInTime: timestamppb.Now(),
+		Rollnumber:  studentId,
+		SignInTime:  timestamppb.Now(),
+		StudentName: "Test2",
 	})
 
 	if e != nil {

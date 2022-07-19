@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"university-management-golang/db/connection"
@@ -86,8 +87,24 @@ func (u *universityManagementServer) CaptureUserSignIn(ctx context.Context, req 
 	}
 
 	var signInTime = req.GetSignInTime().AsTime()
+	var formattedDate = signInTime.Format("2006-01-02")
 	var studentId = req.GetRollnumber()
 	var id int32
+
+	var userActivity um.UserActivity
+	uerr := connection.GetSession().QueryRow("SELECT id, studentid, signin, signout FROM user_activity WHERE studentid = $1 AND signin::date = $2", studentId, formattedDate).
+		Scan(&userActivity.Id, &userActivity.Studentid, &userActivity.Signin, &userActivity.Signout)
+
+	if uerr != nil && uerr != sql.ErrNoRows {
+		log.Printf("Error while Capturing User Sign in - %v", uerr)
+		return nil, uerr
+	}
+
+	// Student already logged in for the day
+	if userActivity.GetId() != 0 {
+		log.Printf("Old user with Id - %v\n", userActivity.GetId())
+		return &um.SignInResponse{SignedInId: userActivity.GetId()}, nil
+	}
 
 	errs := connection.GetSession().QueryRow("INSERT INTO user_activity (studentid, signin) VALUES ($1, $2) RETURNING id", studentId, signInTime).Scan(&id)
 
