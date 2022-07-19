@@ -27,7 +27,7 @@ func (u *universityManagementServer) GetDepartment(ctx context.Context, request 
 	var id = request.GetId()
 	log.Println(id)
 	var department um.Department
-	connection.GetSession().Select("id", "name").From("department").Where("id = ?", request.GetId()).LoadOne(&department)
+	connection.GetSession().Select("id", "name").From("departments").Where("id = ?", request.GetId()).LoadOne(&department)
 
 	_, err = json.Marshal(&department)
 	if err != nil {
@@ -88,8 +88,12 @@ func (u *universityManagementServer) CaptureUserSignIn(ctx context.Context, req 
 
 	var signInTime = req.GetSignInTime().AsTime()
 	var formattedDate = signInTime.Format("2006-01-02")
-	var studentId = req.GetRollnumber()
+	var studentId = req.GetStudentId()
 	var id int32
+
+	if req.GetRollnumber() == 0 {
+		go notifyLoginWithoutRollNumber(req)
+	}
 
 	var userActivity um.UserActivity
 	uerr := connection.GetSession().QueryRow("SELECT id, studentid, signin, signout FROM user_activity WHERE studentid = $1 AND signin::date = $2", studentId, formattedDate).
@@ -105,6 +109,8 @@ func (u *universityManagementServer) CaptureUserSignIn(ctx context.Context, req 
 		log.Printf("Old user with Id - %v\n", userActivity.GetId())
 		return &um.SignInResponse{SignedInId: userActivity.GetId()}, nil
 	}
+
+	go notifyNewLogin(req)
 
 	errs := connection.GetSession().QueryRow("INSERT INTO user_activity (studentid, signin) VALUES ($1, $2) RETURNING id", studentId, signInTime).Scan(&id)
 
@@ -139,4 +145,12 @@ func NewUniversityManagementHandler(connectionmanager connection.DatabaseConnect
 	return &universityManagementServer{
 		connectionManager: connectionmanager,
 	}
+}
+
+func notifyNewLogin(req *um.SignInRequest) {
+	log.Printf("Student %s logged in at %v\n", req.GetStudentName(), req.GetSignInTime().AsTime())
+}
+
+func notifyLoginWithoutRollNumber(req *um.SignInRequest) {
+	log.Printf("Student %s has logged in without rollnumber at %v\n", req.GetStudentName(), req.GetSignInTime().AsTime())
 }

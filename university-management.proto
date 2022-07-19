@@ -36,9 +36,10 @@ message GetStudentResponse {
 }
 
 message SignInRequest {
-  int32 rollnumber = 1;
-  google.protobuf.Timestamp signInTime = 2;
-  string studentName = 3;
+  int32 studentId = 1;
+  int32 rollnumber = 2;
+  google.protobuf.Timestamp signInTime = 3;
+  string studentName = 4;
 }
 
 message SignInResponse {
