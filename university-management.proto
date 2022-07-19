@@ -41,18 +41,19 @@ message SignInRequest {
 }
 
 message SignInResponse {
-  int64 signInId = 1;
+  int32 signedInId = 1;
 }
 
-message SignOut {
+message SignOutRequest {
   int32 rollnumber = 1;
   google.protobuf.Timestamp signOutTime = 2;
+  int32 signedInId = 3;
 }
 
 service UniversityManagementService {
   rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {}
   rpc GetStudents (GetStudentRequest) returns (GetStudentResponse) {}
   rpc CaptureUserSignIn (SignInRequest) returns (SignInResponse) {}
-  rpc CaptureUserSignOut (SignOut) returns (google.protobuf.Empty) {}
+  rpc CaptureUserSignOut (SignOutRequest) returns (google.protobuf.Empty) {}
 
 }

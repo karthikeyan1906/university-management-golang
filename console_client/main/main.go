@@ -46,7 +46,19 @@ func main() {
 	if e != nil {
 		log.Fatalf("Error occured while adding sign in time for student id %d, err : %v \n", studentId, e)
 	} else {
-		log.Println("Capture User sign in time with Id - " + signInResp.String())
+		log.Printf("Captured User sign in time with Id - %d", signInResp.GetSignedInId())
+	}
+
+	_, errs := univClient.CaptureUserSignOut(context.TODO(), &university_management.SignOutRequest{
+		Rollnumber:  studentId,
+		SignOutTime: timestamppb.Now(),
+		SignedInId:  signInResp.GetSignedInId(),
+	})
+
+	if errs != nil {
+		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", studentId, errs)
+	} else {
+		log.Printf("Captured User sign out time for Id - %d", signInResp.GetSignedInId())
 	}
 
 }

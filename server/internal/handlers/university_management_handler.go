@@ -6,6 +6,8 @@ import (
 	"log"
 	"university-management-golang/db/connection"
 	um "university-management-golang/protoclient/university_management"
+
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type universityManagementServer struct {
@@ -74,7 +76,7 @@ func (u *universityManagementServer) GetStudents(ctx context.Context, req *um.Ge
 }
 
 func (u *universityManagementServer) CaptureUserSignIn(ctx context.Context, req *um.SignInRequest) (*um.SignInResponse, error) {
-	log.Println("AddUserSignIn invoked")
+	log.Println("CaptureUserSignIn invoked")
 
 	connection, err := u.connectionManager.GetConnection()
 	defer u.connectionManager.CloseConnection()
@@ -85,21 +87,35 @@ func (u *universityManagementServer) CaptureUserSignIn(ctx context.Context, req 
 
 	var signInTime = req.GetSignInTime().AsTime()
 	var studentId = req.GetRollnumber()
+	var id int32
 
-	// var id int
+	errs := connection.GetSession().QueryRow("INSERT INTO user_activity (studentid, signin) VALUES ($1, $2) RETURNING id", studentId, signInTime).Scan(&id)
 
-	res, e := connection.GetSession().InsertInto("user_activity").Columns("studentid", "signin").Values(studentId, signInTime).Returning("id").Exec()
+	if errs != nil {
+		log.Printf("Error while Capturing User Sign in - %v", errs)
+		return nil, errs
+	}
 
-	// var id int
-	// var query string = fmt.Sprintf("INSERT INTO user_activity (studentid, signin) VALUES ( %d, %s) RETURNING id;", studentId, signInTime)
-	// errs := connection.GetSession().QueryRow(query).Scan(&id)
-	// if errs != nil {
-	// 	log.Fatalln(errs)
-	// }
+	return &um.SignInResponse{SignedInId: id}, nil
+}
 
-	log.Println(res.LastInsertId())
+func (u *universityManagementServer) CaptureUserSignOut(ctx context.Context, req *um.SignOutRequest) (*emptypb.Empty, error) {
+	log.Println("CaptureUserSignOut invoked")
 
-	return &um.SignInResponse{SignInId: 1}, e
+	connection, err := u.connectionManager.GetConnection()
+	defer u.connectionManager.CloseConnection()
+
+	if err != nil {
+		log.Fatalf("Error: %+v", err)
+	}
+
+	var studentId = req.GetRollnumber()
+	var signedInId = req.GetSignedInId()
+	var signOutTime = req.GetSignOutTime().AsTime()
+
+	errs := connection.GetSession().QueryRow("UPDATE user_activity SET signout = $1 WHERE id = $2 AND studentid = $3", signOutTime, signedInId, studentId)
+
+	return &emptypb.Empty{}, errs.Err()
 }
 
 func NewUniversityManagementHandler(connectionmanager connection.DatabaseConnectionManager) um.UniversityManagementServiceServer {

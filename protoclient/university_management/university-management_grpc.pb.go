@@ -22,7 +22,7 @@ type UniversityManagementServiceClient interface {
 	GetDepartment(ctx context.Context, in *GetDepartmentRequest, opts ...grpc.CallOption) (*GetDepartmentResponse, error)
 	GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error)
 	CaptureUserSignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
-	CaptureUserSignOut(ctx context.Context, in *SignOut, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CaptureUserSignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type universityManagementServiceClient struct {
@@ -60,7 +60,7 @@ func (c *universityManagementServiceClient) CaptureUserSignIn(ctx context.Contex
 	return out, nil
 }
 
-func (c *universityManagementServiceClient) CaptureUserSignOut(ctx context.Context, in *SignOut, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *universityManagementServiceClient) CaptureUserSignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/CaptureUserSignOut", in, out, opts...)
 	if err != nil {
@@ -76,7 +76,7 @@ type UniversityManagementServiceServer interface {
 	GetDepartment(context.Context, *GetDepartmentRequest) (*GetDepartmentResponse, error)
 	GetStudents(context.Context, *GetStudentRequest) (*GetStudentResponse, error)
 	CaptureUserSignIn(context.Context, *SignInRequest) (*SignInResponse, error)
-	CaptureUserSignOut(context.Context, *SignOut) (*emptypb.Empty, error)
+	CaptureUserSignOut(context.Context, *SignOutRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUniversityManagementServiceServer()
 }
 
@@ -93,7 +93,7 @@ func (UnimplementedUniversityManagementServiceServer) GetStudents(context.Contex
 func (UnimplementedUniversityManagementServiceServer) CaptureUserSignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CaptureUserSignIn not implemented")
 }
-func (UnimplementedUniversityManagementServiceServer) CaptureUserSignOut(context.Context, *SignOut) (*emptypb.Empty, error) {
+func (UnimplementedUniversityManagementServiceServer) CaptureUserSignOut(context.Context, *SignOutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CaptureUserSignOut not implemented")
 }
 func (UnimplementedUniversityManagementServiceServer) mustEmbedUnimplementedUniversityManagementServiceServer() {
@@ -165,7 +165,7 @@ func _UniversityManagementService_CaptureUserSignIn_Handler(srv interface{}, ctx
 }
 
 func _UniversityManagementService_CaptureUserSignOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignOut)
+	in := new(SignOutRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func _UniversityManagementService_CaptureUserSignOut_Handler(srv interface{}, ct
 		FullMethod: "/university_management.UniversityManagementService/CaptureUserSignOut",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UniversityManagementServiceServer).CaptureUserSignOut(ctx, req.(*SignOut))
+		return srv.(UniversityManagementServiceServer).CaptureUserSignOut(ctx, req.(*SignOutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
