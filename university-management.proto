@@ -50,6 +50,7 @@ message SignOutRequest {
   int32 rollnumber = 1;
   google.protobuf.Timestamp signOutTime = 2;
   int32 signedInId = 3;
+  string studentName = 4;
 }
 
 message userActivity {
