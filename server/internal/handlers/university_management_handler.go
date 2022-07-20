@@ -56,16 +56,7 @@ func (u *universityManagementServer) GetStudents(ctx context.Context, req *um.Ge
 		Load(&students)
 	handleError(fmt.Sprintf("Error while fetching student : %+v", sErr), sErr)
 
-	var studentsResp *um.GetStudentResponse = &um.GetStudentResponse{}
-	for _, s := range students {
-		student := um.Student{
-			Rollnumber:   s.Rollnumber,
-			Name:         s.Name,
-			Departmentid: s.Departmentid,
-		}
-
-		studentsResp.Students = append(studentsResp.Students, &student)
-	}
+	studentsResp := formStudentResponse(students)
 
 	return studentsResp, nil
 }
@@ -134,23 +125,47 @@ func (u *universityManagementServer) CaptureUserSignOut(ctx context.Context, req
 	return &emptypb.Empty{}, errs.Err()
 }
 
-func checkAndNotifyEarlySignOut(userActivity *um.UserActivity, signOutTime time.Time, req *um.SignOutRequest) {
-	layout := "2006-01-02T15:04:05.000000Z"
-	t, cErr := time.Parse(layout, userActivity.Signin)
-	handleError(fmt.Sprintf("Error while parsing signin time %+v", cErr), cErr)
+func (u *universityManagementServer) GetStaffs(ctx context.Context, req *um.GetStaffsRequest) (*um.GetStaffsResponse, error) {
+	log.Println("Get Staffs invoked")
 
-	delta := signOutTime.Sub(t)
-	log.Println(math.Round(delta.Hours()))
+	connection, err := u.connectionManager.GetConnection()
+	defer u.connectionManager.CloseConnection()
+	handleError(fmt.Sprintf("Error while creating DB connection: %+v", err), err)
 
-	if delta.Hours() < 8 {
-		go notifyEarlySignOut(req, delta.Hours(), t)
-	}
+	var rollnumber = req.GetRollNumber()
+	var staffs []um.Staff
+
+	_, sErr := connection.GetSession().Select("staffs.id", "staffs.name").From("dept_staffs_mapping").
+		Join("students", "dept_staffs_mapping.departmentid = students.departmentid").
+		Join("staffs", "dept_staffs_mapping.staffid = staffs.id").
+		Where("students.rollnumber = ?", rollnumber).
+		Load(&staffs)
+	handleError(fmt.Sprintf("Error while fetching staffs : %+v", sErr), sErr)
+
+	staffsResp := formStaffResponse(staffs)
+
+	return staffsResp, nil
 }
 
 func NewUniversityManagementHandler(connectionmanager connection.DatabaseConnectionManager) um.UniversityManagementServiceServer {
 	return &universityManagementServer{
 		connectionManager: connectionmanager,
 	}
+}
+
+func formStudentResponse(students []um.Student) *um.GetStudentResponse {
+	var studentsResp *um.GetStudentResponse = &um.GetStudentResponse{}
+	for _, s := range students {
+		student := um.Student{
+			Rollnumber:   s.Rollnumber,
+			Name:         s.Name,
+			Departmentid: s.Departmentid,
+		}
+
+		studentsResp.Students = append(studentsResp.Students, &student)
+	}
+
+	return studentsResp
 }
 
 func getUserActivityForSignIn(connection connection.DatabaseConnect, studentId int32, formattedDate string) (um.UserActivity, error) {
@@ -185,6 +200,33 @@ func getUserActivityForSignOut(connection connection.DatabaseConnect, signedInId
 		Signin:    signIn.String,
 		Signout:   signOut.String,
 	}, uerr
+}
+
+func formStaffResponse(staffs []um.Staff) *um.GetStaffsResponse {
+	var staffsResp *um.GetStaffsResponse = &um.GetStaffsResponse{}
+	for _, s := range staffs {
+		staff := um.Staff{
+			Id:   s.GetId(),
+			Name: s.GetName(),
+		}
+
+		staffsResp.Staffs = append(staffsResp.Staffs, &staff)
+	}
+
+	return staffsResp
+}
+
+func checkAndNotifyEarlySignOut(userActivity *um.UserActivity, signOutTime time.Time, req *um.SignOutRequest) {
+	layout := "2006-01-02T15:04:05.000000Z"
+	t, cErr := time.Parse(layout, userActivity.Signin)
+	handleError(fmt.Sprintf("Error while parsing signin time %+v", cErr), cErr)
+
+	delta := signOutTime.Sub(t)
+	log.Println(math.Round(delta.Hours()))
+
+	if delta.Hours() < 8 {
+		go notifyEarlySignOut(req, delta.Hours(), t)
+	}
 }
 
 func notifyNewLogin(req *um.SignInRequest) {

@@ -60,10 +60,23 @@ message userActivity {
   string signout = 4;
 }
 
+message GetStaffsRequest {
+  int32 rollNumber = 1;
+}
+
+message staff {
+  int32 id = 1;
+  string name = 2;
+}
+
+message GetStaffsResponse {
+  repeated staff staffs = 1;
+}
+
 service UniversityManagementService {
   rpc GetDepartment (GetDepartmentRequest) returns (GetDepartmentResponse) {}
   rpc GetStudents (GetStudentRequest) returns (GetStudentResponse) {}
   rpc CaptureUserSignIn (SignInRequest) returns (SignInResponse) {}
   rpc CaptureUserSignOut (SignOutRequest) returns (google.protobuf.Empty) {}
-
+  rpc GetStaffs (GetStaffsRequest) returns (GetStaffsResponse);
 }

@@ -23,6 +23,7 @@ type UniversityManagementServiceClient interface {
 	GetStudents(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error)
 	CaptureUserSignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	CaptureUserSignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetStaffs(ctx context.Context, in *GetStaffsRequest, opts ...grpc.CallOption) (*GetStaffsResponse, error)
 }
 
 type universityManagementServiceClient struct {
@@ -69,6 +70,15 @@ func (c *universityManagementServiceClient) CaptureUserSignOut(ctx context.Conte
 	return out, nil
 }
 
+func (c *universityManagementServiceClient) GetStaffs(ctx context.Context, in *GetStaffsRequest, opts ...grpc.CallOption) (*GetStaffsResponse, error) {
+	out := new(GetStaffsResponse)
+	err := c.cc.Invoke(ctx, "/university_management.UniversityManagementService/GetStaffs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UniversityManagementServiceServer is the server API for UniversityManagementService service.
 // All implementations must embed UnimplementedUniversityManagementServiceServer
 // for forward compatibility
@@ -77,6 +87,7 @@ type UniversityManagementServiceServer interface {
 	GetStudents(context.Context, *GetStudentRequest) (*GetStudentResponse, error)
 	CaptureUserSignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	CaptureUserSignOut(context.Context, *SignOutRequest) (*emptypb.Empty, error)
+	GetStaffs(context.Context, *GetStaffsRequest) (*GetStaffsResponse, error)
 	mustEmbedUnimplementedUniversityManagementServiceServer()
 }
 
@@ -95,6 +106,9 @@ func (UnimplementedUniversityManagementServiceServer) CaptureUserSignIn(context.
 }
 func (UnimplementedUniversityManagementServiceServer) CaptureUserSignOut(context.Context, *SignOutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CaptureUserSignOut not implemented")
+}
+func (UnimplementedUniversityManagementServiceServer) GetStaffs(context.Context, *GetStaffsRequest) (*GetStaffsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStaffs not implemented")
 }
 func (UnimplementedUniversityManagementServiceServer) mustEmbedUnimplementedUniversityManagementServiceServer() {
 }
@@ -182,6 +196,24 @@ func _UniversityManagementService_CaptureUserSignOut_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UniversityManagementService_GetStaffs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStaffsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UniversityManagementServiceServer).GetStaffs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/university_management.UniversityManagementService/GetStaffs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UniversityManagementServiceServer).GetStaffs(ctx, req.(*GetStaffsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UniversityManagementService_ServiceDesc is the grpc.ServiceDesc for UniversityManagementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -204,6 +236,10 @@ var UniversityManagementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CaptureUserSignOut",
 			Handler:    _UniversityManagementService_CaptureUserSignOut_Handler,
+		},
+		{
+			MethodName: "GetStaffs",
+			Handler:    _UniversityManagementService_GetStaffs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

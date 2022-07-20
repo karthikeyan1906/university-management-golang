@@ -145,17 +145,18 @@ func insertDeptStaffsMappingSeedData(connectionManager connection.DatabaseConnec
 	}
 
 	log.Println("Cleaning up DeptStaffsMapping table")
-	_, err = connection.GetSession().DeleteFrom("DeptStaffsMapping").Exec()
+	_, err = connection.GetSession().DeleteFrom("dept_staffs_mapping").Exec()
 	if err != nil {
 		log.Fatalf("Could not delete from DeptStaffsMapping table. Err: %+v", err)
 	}
 
 	log.Println("Inserting into DeptStaffsMapping table")
-	_, err = connection.GetSession().InsertInto("DeptStaffsMapping").Columns("id", "departmentid", "staffid").
-		Values(1, 2, 1).
-		Values(2, 2, 2).
-		Values(1, 2, 4).
-		Values(1, 3, 3).
+	_, err = connection.GetSession().InsertInto("dept_staffs_mapping").Columns("id", "departmentid", "staffid").
+		Values("1", "2", "1").
+		Values("2", "2", "2").
+		Values("3", "2", "4").
+		Values("4", "3", "3").
+		Values("5", "3", "4").
 		Exec()
 
 	if err != nil {

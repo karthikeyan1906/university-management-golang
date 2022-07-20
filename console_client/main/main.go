@@ -49,7 +49,7 @@ func main() {
 	})
 
 	if siErr != nil {
-		log.Fatalf("Error occured while adding sign in time for student id %d, err : %v \n", studentId, siErr)
+		log.Fatalf("Error occured while adding sign in time for student id %d, err : %+v \n", studentId, siErr)
 	} else {
 		log.Printf("Captured User sign in time with Id - %d", signInResp.GetSignedInId())
 	}
@@ -62,7 +62,7 @@ func main() {
 	})
 
 	if soErr != nil {
-		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", studentId, soErr)
+		log.Fatalf("Error occured while adding sign out time for student id %d, err : %+v \n", studentId, soErr)
 	} else {
 		log.Printf("Captured User sign out time for Id - %d", signInResp.GetSignedInId())
 	}
@@ -75,7 +75,7 @@ func main() {
 	})
 
 	if sgiErr != nil {
-		log.Fatalf("Error occured while adding sign in time for student id %d, err : %v \n", studentId, sgiErr)
+		log.Fatalf("Error occured while adding sign in time for student id %d, err : %+v \n", studentId, sgiErr)
 	} else {
 		log.Printf("Captured User sign in time without rollnumber with Id - %d", logInResp.GetSignedInId())
 	}
@@ -89,7 +89,7 @@ func main() {
 	})
 
 	if sonErr != nil {
-		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", 2, sonErr)
+		log.Fatalf("Error occured while adding sign out time for student id %d, err : %+v \n", 2, sonErr)
 	} else {
 		log.Printf("Captured User early sign out time for Id - %d", logInResp.GetSignedInId())
 	}
@@ -103,7 +103,7 @@ func main() {
 	})
 
 	if soNotiErr != nil {
-		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", 2, soNotiErr)
+		log.Fatalf("Error occured while adding sign out time for student id %d, err : %+v \n", 2, soNotiErr)
 	} else {
 		log.Printf("Captured User sign out time after 8 hours for Id - %d", logInResp.GetSignedInId())
 	}
@@ -115,4 +115,12 @@ func main() {
 		log.Fatalf("Error occured while fetching students directory for id %s, err: %+v \n", departmentName, stuErr)
 	}
 	log.Println(stuResp)
+
+	// Display staffs based on the student's deparment
+	var rollnumber = 2
+	staffResp, staffErr := univClient.GetStaffs(context.TODO(), &university_management.GetStaffsRequest{RollNumber: int32(rollnumber)})
+	if staffErr != nil {
+		log.Fatalf("Error occured while fetching staffs directory for student id %d, err: %+v \n", rollnumber, staffErr)
+	}
+	log.Println(staffResp)
 }
