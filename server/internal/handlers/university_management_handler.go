@@ -50,7 +50,10 @@ func (u *universityManagementServer) GetStudents(ctx context.Context, req *um.Ge
 
 	var students []um.Student
 
-	_, sErr := connection.GetSession().Select("rollnumber", "students.name", "departmentid").From("students").Join("departments", "students.departmentid = departments.id").Where("departments.name = ?", departmentName).Load(&students)
+	_, sErr := connection.GetSession().Select("rollnumber", "students.name", "departmentid").From("students").
+		Join("departments", "students.departmentid = departments.id").
+		Where("? = '' OR departments.name = ?", departmentName, departmentName).
+		Load(&students)
 	handleError(fmt.Sprintf("Error while fetching student : %+v", sErr), sErr)
 
 	var studentsResp *um.GetStudentResponse = &um.GetStudentResponse{}

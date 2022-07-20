@@ -77,7 +77,7 @@ func main() {
 	if sgiErr != nil {
 		log.Fatalf("Error occured while adding sign in time for student id %d, err : %v \n", studentId, sgiErr)
 	} else {
-		log.Printf("Captured User sign in time with Id - %d", logInResp.GetSignedInId())
+		log.Printf("Captured User sign in time without rollnumber with Id - %d", logInResp.GetSignedInId())
 	}
 
 	//Capture Student Sign out time with notification for early sign out (within 8 hours from sign in time)
@@ -91,7 +91,7 @@ func main() {
 	if sonErr != nil {
 		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", 2, sonErr)
 	} else {
-		log.Printf("Captured User sign out time for Id - %d", 22)
+		log.Printf("Captured User early sign out time for Id - %d", logInResp.GetSignedInId())
 	}
 
 	//Capture Student Sign out time after 8 hours from sign in time without notification
@@ -105,6 +105,14 @@ func main() {
 	if soNotiErr != nil {
 		log.Fatalf("Error occured while adding sign out time for student id %d, err : %v \n", 2, soNotiErr)
 	} else {
-		log.Printf("Captured User sign out time for Id - %d", 22)
+		log.Printf("Captured User sign out time after 8 hours for Id - %d", logInResp.GetSignedInId())
 	}
+
+	// List students directory
+	var empty string = ""
+	stuResp, stuErr := univClient.GetStudents(context.TODO(), &university_management.GetStudentRequest{DepartmentName: empty})
+	if stuErr != nil {
+		log.Fatalf("Error occured while fetching students directory for id %s, err: %+v \n", departmentName, stuErr)
+	}
+	log.Println(stuResp)
 }
