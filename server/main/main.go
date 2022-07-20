@@ -73,7 +73,7 @@ func insertDepartmentSeedData(connectionManager connection.DatabaseConnectionMan
 	_, err = connection.GetSession().InsertInto("departments").Columns("id", "name").
 		Values("1", "Computer Science").
 		Values("2", "Information Technology").
-		Values("3", "EC").
+		Values("3", "Electronic and Communication").
 		Exec()
 
 	if err != nil {
@@ -97,11 +97,11 @@ func insertStudentSeedData(connectionManager connection.DatabaseConnectionManage
 
 	log.Println("Inserting into students table")
 	_, err = connection.GetSession().InsertInto("students").Columns("rollnumber", "name", "departmentid").
-		Values("1", "Test1", "2").
-		Values("2", "Test2", "2").
-		Values("3", "Test3", "2").
-		Values("4", "Test4", "3").
-		Values("5", "Test4", "3").
+		Values("1", "Virat Kholi", "2").
+		Values("2", "Rohit Sharma", "2").
+		Values("3", "Ravindra Jadeja", "2").
+		Values("4", "Suryakumar Yadav", "3").
+		Values("5", "Ravi Ashwin", "3").
 		Exec()
 
 	if err != nil {
@@ -124,10 +124,11 @@ func insertStaffsSeedData(connectionManager connection.DatabaseConnectionManager
 	}
 
 	log.Println("Inserting into staffs table")
-	_, err = connection.GetSession().InsertInto("staffs").Columns("id", "name").Values("1", "Staff 1").
-		Values("2", "Staff 2").
-		Values("3", "Staff 3").
-		Values("4", "Staff 4").
+	_, err = connection.GetSession().InsertInto("staffs").Columns("id", "name").
+		Values("1", "Rahul Dravid").
+		Values("2", "Sachin Tendulkar").
+		Values("3", "Saurov Ganguly").
+		Values("4", "VVS Laxman").
 		Exec()
 
 	if err != nil {

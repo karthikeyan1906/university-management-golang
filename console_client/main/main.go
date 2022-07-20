@@ -44,7 +44,7 @@ func main() {
 	signInResp, siErr := univClient.CaptureUserSignIn(context.TODO(), &university_management.SignInRequest{
 		Rollnumber:  studentId,
 		SignInTime:  timestamppb.Now(),
-		StudentName: "Test2",
+		StudentName: "Rohit Sharma",
 		StudentId:   studentId,
 	})
 
@@ -70,7 +70,7 @@ func main() {
 	//Capture Student Sign in time along with notification for sign in without rollnumber
 	logInResp, sgiErr := univClient.CaptureUserSignIn(context.TODO(), &university_management.SignInRequest{
 		SignInTime:  timestamppb.Now(),
-		StudentName: "Test2",
+		StudentName: "Rohit Sharma",
 		StudentId:   studentId,
 	})
 
@@ -85,7 +85,7 @@ func main() {
 		Rollnumber:  studentId,
 		SignOutTime: timestamppb.Now(),
 		SignedInId:  logInResp.GetSignedInId(),
-		StudentName: "Test2",
+		StudentName: "Rohit Sharma",
 	})
 
 	if sonErr != nil {
@@ -99,7 +99,7 @@ func main() {
 		Rollnumber:  studentId,
 		SignOutTime: timestamppb.New(time.Now().Add(time.Hour * time.Duration(9))),
 		SignedInId:  logInResp.GetSignedInId(),
-		StudentName: "Test2",
+		StudentName: "Rohit Sharma",
 	})
 
 	if soNotiErr != nil {
